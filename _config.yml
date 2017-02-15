@@ -1,0 +1,10 @@
+exclude:
+        - Gemfile
+        - Gemfile.lock
+
+defaults:
+  -
+    values:
+      layout: "post"
+      author: "Eric Persson"
+      published: "False"

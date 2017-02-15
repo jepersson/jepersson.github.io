@@ -1,0 +1,24 @@
+@media (min-width: 992px) {
+  #blog-header {
+    max-width: 330px;
+    position:fixed; 
+    bottom:15%; 
+  }
+}
+@media (min-width: 1200px) {
+  #blog-header {
+    max-width: 385px;
+  }
+}
+
+#blog-nav > .nav-link {
+  padding-right:0;
+}
+
+#blog-header {
+  padding: 1em 1.5em 2em;
+}
+
+.post {
+  padding: 1em 1.5em 2em;
+}
