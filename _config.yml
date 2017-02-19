@@ -1,10 +1,15 @@
+repository:
+  jepersson/jepersson.github.io
+
 exclude:
-        - Gemfile
-        - Gemfile.lock
+  - Gemfile
+  - Gemfile.lock
+
+sass:
+  style: :compressed
 
 defaults:
-  -
-    values:
-      layout: "post"
-      author: "Eric Persson"
-      published: "False"
+  values:
+    layout: "post"
+    author: "Eric Persson"
+    published: "False"

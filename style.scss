@@ -1,0 +1,67 @@
+---
+---
+
+//Using Bootstrap sass files
+@import "bootstrap/bootstrap";
+
+//Adding classes to kramdown output
+table {
+  @extend .table, .table-responsive;
+}
+thead {
+  @extend .thead-default;
+}
+blockquote {
+  @extend .blockquote;
+}
+img {
+  @extend .img-fluid, .rounded, .mx-auto, .d-block;
+}
+
+//Sticky footer styling
+html {
+  position: relative;
+  min-height: 100%;
+}
+#blog-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+//Blog header styling
+#blog-header {
+  padding-top: 2em;
+}
+#blog-nav > .nav-link {
+  padding-right:0;
+}
+@media (min-width: 992px) {
+  #blog-header {
+    max-width: 330px;
+    position:fixed; 
+    bottom:15%; 
+    padding-right: 2em;
+  }
+}
+@media (min-width: 1200px) {
+  #blog-header {
+    max-width: 385px;
+  }
+}
+
+//Main contents styling
+#blog-content {
+  padding-top: 3em;
+  padding-bottom: 2em;
+  margin-bottom: 120px;
+}
+@media (min-width: 992px) {
+  #blog-content {
+    margin-bottom: 80px;
+  }
+}
+.blockquote p:last-child {
+  margin-bottom: 0;
+}
+
