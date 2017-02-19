@@ -13,3 +13,6 @@ defaults:
     layout: "post"
     author: "Eric Persson"
     published: "False"
+
+markdown: kramdown
+highlighter: rouge
