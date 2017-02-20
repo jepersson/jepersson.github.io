@@ -1,6 +1,5 @@
 ---                                                                             
 title: "Adding some more contents"                                                 
-published: true                                                                 
 layout: post
 ---                                                                             
 

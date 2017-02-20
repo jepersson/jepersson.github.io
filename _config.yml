@@ -8,16 +8,7 @@ exclude:
 sass:
   style: :compressed
 
-highlighter: rouge
 markdown: kramdown
 kramdown:
   input: GFM
-  auto_ids: true
   syntax_highlighter: rouge
-
-defaults:
-  values:
-    layout: "post"
-    author: "Eric Persson"
-    published: "False"
-

@@ -17,6 +17,10 @@ blockquote {
 img {
   @extend .img-fluid, .rounded, .mx-auto, .d-block;
 }
+pre {
+  @extend .rounded;
+  padding: 1.0em;
+}
 
 //Sticky footer styling
 html {
