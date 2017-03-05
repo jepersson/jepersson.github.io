@@ -30,15 +30,15 @@ Let's try some unordered lists as well.
 * Item 1
 * Item 2
   * Item 2a
-    * Item 2b
+  * Item 2b
 
 And maybe some ordered ones too.
 
 1. Item 1
 2. Item 2
 3. Item 3
-   * Item 3a
-      * Item 3b
+  * Item 3a
+  * Item 3b
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
 
