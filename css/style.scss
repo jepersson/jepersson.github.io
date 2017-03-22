@@ -11,6 +11,9 @@ table {
 thead {
   @extend .thead-default;
 }
+td {
+  @extend .text-right;
+}
 blockquote {
   @extend .blockquote;
 }
