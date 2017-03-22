@@ -6,7 +6,7 @@ published: true
 
 ![Lists for stroop test](/img/2017-03-21-stroop.png)
 
-This will be the first post I fully dedicate to one of the Udacity Data Analysis Nanodegree projects. For this project I decided to use excel for analysis and visualizations in order to be able to focus on the process and writing rather than the tools. 
+*This will be the first post I fully dedicate to one of the Udacity Data Analysis Nanodegree projects. For this project I decided to use excel for analysis and visualizations in order to be able to focus on the process and writing rather than the tools.*
 
 In this post we will take a look at a classic phenomena from experimental psychology, the Stroop effect. After a short description of the effect we will present some data and then proceed with calculating statistics and performing a test to see if there are any difference in response time while naming colors from to different predefined lists out loud.
 
