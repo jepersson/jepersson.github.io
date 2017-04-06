@@ -131,7 +131,9 @@ $$ t_{critical}(24) = 2.064 $$
 
 To continue, we input the measures we obtained from our data into the equation for our $ t_{statistic} $ and get the following results:
 
-$$ t_{statistic} = \frac{\bar{X_i} - \bar{X_c}}{S / \sqrt{n}} = \frac{21.761 - 13.967}{4.838 / 5} = 8.055 $$
+$$ t_{statistic} = \frac{\bar{X_i} - \bar{X_c}}{S / \sqrt{n}} = \frac{21.761 - 13.967}{4.838 / 5} = $$
+
+$$ = 8.055 $$
 
 *(with)*
 
