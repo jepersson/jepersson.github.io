@@ -6,8 +6,8 @@ published: true
  
 *This is the second post dedicated to my Udacity nanodegree and this time the
 project is my first go at doing a full data analysis from start to finish using
-python notebooks and the pandas library (together with scipy and statsmodels).
-To give focus to the overarching process there are some choices made to simplify
+python notebook and pandas (together with scipy and statsmodels).
+To give focus to the overarching process I have made some choices in order to simplify
 the analysis, as you will see. I am planning to give more focus on the data
 wrangling, model building, and visualization/communication phases in upcoming
 posts.* 
@@ -27,7 +27,6 @@ We will take a look at and analyze the dataset to see if we can find the answers
 to these questions.
 But first, before we start let's import the libraries we will need for our
 analysis.
-
 
 ```python
 # Importing numpy and pandas for handy data handling. 
@@ -57,18 +56,15 @@ The set itself is taken from the following [Kaggle
 competition](https://www.kaggle.com/c/titanic/data) which works as an
 introduction to their machine learning competitions. We will use the same
 dataset but focus more on our analysis of the data rather than making
-predictions of who should live or die.
+predictions of who will live or die.
 
 We start by reading in the data using the pandas CSV reader and take a look at
-what we have. 
-
+what we have to play with. 
 
 ```python
 passengers = pd.read_csv('titanic-data.csv')
 passengers.head(3)
 ```
-
-
 
 | | PassengerId | Survived | Pclass | Name | Sex | Age | SibSp | Parch | Ticket | Fare | Cabin | Embarked |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -76,10 +72,8 @@ passengers.head(3)
 | 1 | 2 | 1 | 1 | Cumings, Mrs. John Bradley (Florence Briggs Th... | female | 38.0 | 1 | 0 | PC 17599 | 71.2833 | C85 | C |
 | 2 | 3 | 1 | 3 | Heikkinen, Miss. Laina | female | 26.0 | 0 | 0 | STON/O2\. 3101282 | 7.9250 | NaN | S |
 
-
-
-It seems like the data has been read with almost no problems at all, but there
-are some columns in the given set that needs further explanation. The following
+It seems like the data has been read without any major problems, but there
+are some columns in the given set that might need further explanation. The following
 explanations are given on the Kaggle competition page.
 
 |Variable|Definition|Key|
@@ -96,57 +90,55 @@ explanations are given on the Kaggle competition page.
 |embarked|Port of Embarkation|C = Cherbourg, Q = Queenstown, S = Southampton|
 
 We can also see that there are some 'NaN' values present in the cabin column so
-just to be sure we will take an extra look at our data with the `.info()`
-method.
-
+we will take an extra look at our data with the `.info()` method to see how many
+missing values there are.
 
 ```python
 # Check info about the data we read with .read_csv()
 passengers.info()
 ```
 
-    # Output
-    <class 'pandas.core.frame.DataFrame'>
-    RangeIndex: 891 entries, 0 to 890
-    Data columns (total 12 columns):
-    PassengerId    891 non-null int64
-    Survived       891 non-null int64
-    Pclass         891 non-null int64
-    Name           891 non-null object
-    Sex            891 non-null object
-    Age            714 non-null float64
-    SibSp          891 non-null int64
-    Parch          891 non-null int64
-    Ticket         891 non-null object
-    Fare           891 non-null float64
-    Cabin          204 non-null object
-    Embarked       889 non-null object
-    dtypes: float64(2), int64(5), object(5)
-    memory usage: 83.6+ KB
-
+```
+# Output
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 891 entries, 0 to 890
+Data columns (total 12 columns):
+PassengerId    891 non-null int64
+Survived       891 non-null int64
+Pclass         891 non-null int64
+Name           891 non-null object
+Sex            891 non-null object
+Age            714 non-null float64
+SibSp          891 non-null int64
+Parch          891 non-null int64
+Ticket         891 non-null object
+Fare           891 non-null float64
+Cabin          204 non-null object
+Embarked       889 non-null object
+dtypes: float64(2), int64(5), object(5)
+memory usage: 83.6+ KB
+```
 
 We can see that in addition to the Cabin column, Age, and Embarked columns are
-also missing values.
-We either need to estimate the missing values or drop them. 
+also missing values.  We either need to estimate these missing values or drop them. 
 
 We could estimate missing ages with either median or average values, but for our
 analysis the non-null 714 values will be enough. We choose to just drop the rows
-with null values this time. Cabin has to many missing values and according to
-wikipedia also a possible bias towards first class passengers. However,
-something that would be interesting to look up is for example if cabin proximity
-to the few lifeboats that were available influenced the possibility for
-survival. This is out of scope for this time so instead we choose to just drop
-the columns.
+with null values. Cabin has too many missing values to make anything out of and
+according to wikipedia also a possible bias towards first class passengers.
+However, something that would be interesting to look up another time is for example if cabin
+proximity to the few lifeboats that were available influenced the possibility
+for survival. This is out of scope so instead we choose to just drop the columns.
 
 Also, upon further inspection it seems like SibSp/Parch and ticket numbers don't
-have any much connection making it hard to make sense of which passenger are
-related to which. There might be some interesting analysis in answering the
+have much of a connection making it hard to make sense of which passengers are
+related to who. There might be some interesting analysis in answering the
 question if being in a group increased or decreased the probability for
 survival. But, once again this might be a bit to much work for this time so we
 choose to drop these three columns as well.
 
 The same reasoning goes for the Name, PassengerId, and Fare columns which we
-also choose to drop.
+all choose to drop.
 
 ```python
 # Dropping rows with NaN values
@@ -164,7 +156,7 @@ passengers.drop('Name', axis=1, inplace=True)
 passengers.drop('PassengerId', axis=1, inplace=True)
 passengers.drop('Fare', axis=1, inplace=True)
 ```
-Last, to make column names more coherent we rename the Pclass column to just
+Lastly, to make column names more coherent we rename the Pclass column to just
 Class and to better describe to contents of each column we convert the Sex,
 Class, and Survived column's data types from Strings to Categories, and Integers
 to booleans. 
@@ -180,12 +172,9 @@ passengers['Survived'] = passengers['Survived'].apply(bool)
 
 This gives us the below data frame to work with.
 
-
 ```python
 passengers.head()
 ```
-
-
 
  | | Survived | Class | Sex | Age |
 --- | --- | --- | --- | --- |
@@ -195,97 +184,83 @@ passengers.head()
  | 3 | True | 1 | female | 35.0 |
  | 4 | False | 3 | male | 35.0 |
 
-
-
 ```python
 passengers.info()
 ```
 
-    # Output
-    <class 'pandas.core.frame.DataFrame'>
-    Int64Index: 714 entries, 0 to 890
-    Data columns (total 4 columns):
-    Survived    714 non-null bool
-    Class       714 non-null category
-    Sex         714 non-null category
-    Age         714 non-null float64
-    dtypes: bool(1), category(2), float64(1)
-    memory usage: 13.3 KB
-
+```
+# Output
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 714 entries, 0 to 890
+Data columns (total 4 columns):
+Survived    714 non-null bool
+Class       714 non-null category
+Sex         714 non-null category
+Age         714 non-null float64
+dtypes: bool(1), category(2), float64(1)
+memory usage: 13.3 KB
+```
 
 ### Descriptive stats
 
+To get a better grip of the data we use the pandas dataframe's `.describe()`
+method to see some statistics describing each of the variables in our dataset.
 
 ```python
 passengers['Age'].describe()
 ```
 
-
-
-
-    # Output
-    count    714.000000
-    mean      29.699118
-    std       14.526497
-    min        0.420000
-    25%       20.125000
-    50%       28.000000
-    75%       38.000000
-    max       80.000000
-    Name: Age, dtype: float64
-
-
-
+```
+# Output
+count    714.000000
+mean      29.699118
+std       14.526497
+min        0.420000
+25%       20.125000
+50%       28.000000
+75%       38.000000
+max       80.000000
+Name: Age, dtype: float64
+```
 
 ```python
 passengers['Sex'].describe()
 ```
 
-
-
-
-    # Output
-    count      714
-    unique       2
-    top       male
-    freq       453
-    Name: Sex, dtype: object
-
-
-
+```
+# Output
+count      714
+unique       2
+top       male
+freq       453
+Name: Sex, dtype: object
+```
 
 ```python
 passengers['Class'].describe()
 ```
 
-
-
-
-    # Output
-    count     714
-    unique      3
-    top         3
-    freq      355
-    Name: Class, dtype: int64
-
-
-
+```
+# Output
+count     714
+unique      3
+top         3
+freq      355
+Name: Class, dtype: int64
+```
 
 ```python
 passengers['Survived'].describe()
 ```
 
-
-
-
-    # Output
-    count       714
-    unique        2
-    top       False
-    freq        424
-    Name: Survived, dtype: object
-
-
+```
+# Output
+count       714
+unique        2
+top       False
+freq        424
+Name: Survived, dtype: object
+```
 
 Based on the above, we can see that for our sample the typical passenger was a
 male around 30 traveling in third class and, unfortunately, did not survive the
@@ -296,7 +271,6 @@ Lets try to plot some different relationships between class, sex, and age for
 the survivors and non-survivors in our data set to see if we can find something
 interesting. We start out with plotting comparisons for the composition of
 passenger class and sex between survivors and casualties. 
-
 
 ```python
 # Create a grid with two columns for display
@@ -324,9 +298,7 @@ axs[1].set(title='2. Survivors by Sex', ylabel='Passengers')
 plt.show()
 ```
 
-
 ![Passengers survived by class and age](/img/2017-05-07-survivors-by.png)
-
 
 From the above bar graphs we can see that there is a big change in ratio between
 male and female, and between third class and first/second class passengers
@@ -343,11 +315,9 @@ adjusted graph it looks like we might have a correlation between higher age and
 an decreased probability of survival. We will also try to answer this question
 later on using logistic regression.
 
-
 ```python
 # Create a new grid for plots
 fig, axs = plt.subplots(ncols=2, figsize=(12, 4))
-
 
 #Grouped and plotted by age in full years
 survival_by_age = passengers.groupby(lambda x: int(passengers.loc[x].Age)).Survived
@@ -370,9 +340,7 @@ axs[1].set(title='4. Probability of survival per Age group',
            ylim=[-0.05,1.05]);
 ```
 
-
 ![Probability for survival and age](/img/2017-05-07-probability-of-survival.png)
-
 
 ## Chi squared test for independence
 
@@ -421,13 +389,9 @@ We start with testing survival and class to see if class did have a
 statistically significant effect on survival. We are using the same pivot table
 we used to display our bar plot earlier as input.
 
-
 ```python
 survived_by_class
 ```
-
-
-
 
 | Class | 1 | 2 | 3 |
 | --- | --- | --- | --- |
@@ -435,8 +399,6 @@ survived_by_class
 | --- | --- | --- | --- |
 | False | 64 | 90 | 270 |
 | True | 122 | 83 | 85 |
-
-
 
 ```python
 chi2, p_value, dof, expected = chi2_contingency(survived_by_class)
@@ -446,11 +408,12 @@ print 'Chi squared test score: ' + str(chi2)
 print 'P-value: ' + str(p_value)
 ```
 
-    # Output
-    Degrees of freedom: 2
-    Chi squared test score: 92.9014172114
-    P-value: 6.70986174976e-21
-
+```
+# Output
+Degrees of freedom: 2
+Chi squared test score: 92.9014172114
+P-value: 6.70986174976e-21
+```
 
 Looking up the critical value in a
 [$\chi^2$-table](https://people.richland.edu/james/lecture/m170/tbl-chi.html) we
@@ -461,13 +424,9 @@ class significant for all reasonable $\alpha$. As a result we reject our $H_0$.
 Similarly for survival and sex we use our old pivot table and recieve the
 following results.
 
-
 ```python
 survived_by_sex
 ```
-
-
-
 
 | Sex | female | male |
 | --- | --- | --- |
@@ -475,8 +434,6 @@ survived_by_sex
 | --- | --- | --- |
 | False | 64 | 360 |
 | True | 197 | 93 |
-
-
 
 ```python
 chi2, p_value, dof, expected = chi2_contingency(survived_by_sex)
@@ -486,11 +443,12 @@ print 'Chi squared test score: ' + str(chi2)
 print 'P-value: ' + str(p_value)
 ```
 
-    # Output
-    Degrees of freedom: 1
-    Chi squared test score: 205.025827529
-    P-value: 1.67166784414e-46
-
+```
+# Output
+Degrees of freedom: 1
+Chi squared test score: 205.025827529
+P-value: 1.67166784414e-46
+```
 
 Once again we get a statistic value larger than any critical value for any
 reasonable $\alpha$. We once again reject $H_0$ and conclude that there is a
@@ -510,7 +468,6 @@ add these two non-continuous variables we need to create some additional dummy
 variables to represent the different values for class and age as simple True(1)
 or False(0) variables. This is simple to do using pandas .get_dummies() method.
 
-
 ```python
 # Add dummy variables for class and sex.
 passenger_dummies = passengers.join(
@@ -529,8 +486,6 @@ passenger_dummies.drop('male', axis=1, inplace=True)
 passenger_dummies.head()
 ```
 
-
-
 || Survived | Age | Class_1 | Class_2 | female |
 | --- | --- | --- | --- | --- | --- |
 | 0 | False | 22.0 | 0 | 0 | 0 |
@@ -539,10 +494,8 @@ passenger_dummies.head()
 | 3 | True | 35.0 | 1 | 0 | 1 |
 | 4 | False | 35.0 | 0 | 0 | 0 |
 
-
 Next step is to feed our data into the logistic regression model from the
 statsmodel package and fit it to the inputted data.
-
 
 ```python
 logit = sm.Logit(passenger_dummies['Survived'], 
@@ -554,13 +507,12 @@ result = logit.fit()
 result.summary()
 ```
 
-    # Output
-    Optimization terminated successfully.
-             Current function value: 0.474695
-             Iterations 6
-
-
-
+```
+# Output
+Optimization terminated successfully.
+        Current function value: 0.474695
+        Iterations 6
+```
 
 **Logit regression results**
 
@@ -579,7 +531,6 @@ result.summary()
 | Class_2 | 0.9867 | 0.233 | 4.232 | 0.000 | 0.530 | 1.444 |
 | female | 2.1893 | 0.198 | 11.035 | 0.000 | 1.800 | 2.578 |
 
-
 Looking at the coefficient for Age, we can see that there is a negative relation
 between passenger age and probability of survival. On the other hand Class_1,
 Class_2, and female have positive coefficients meaning that there is a positive
@@ -596,7 +547,6 @@ As a last trick we plot all the different possibilities for survival based on
 age for each combination of our categorical variables so that we can visualize
 what passengers had the highest and/or lowest possibility of survival for the
 shipwreck. 
-
 
 ```python
 # Last step, visualizing the probability for all possible data points
@@ -641,8 +591,6 @@ combinations['survival_prediction'] = result.predict(combinations)
 combinations[180:186]
 ```
 
-
-
 || age | class_1 | class_2 | female | survival_prediction |
 | --- | --- | --- | --- | --- | --- |
 | 180 | 30 | 1 | 0 | 0 | 0.635962 |
@@ -651,8 +599,6 @@ combinations[180:186]
 | 183 | 30 | 0 | 1 | 1 | 0.756086 |
 | 184 | 30 | 0 | 0 | 0 | 0.114586 |
 | 185 | 30 | 0 | 0 | 1 | 0.536085 |
-
-
 
 ```python
 #Pivoting table for plotting.
@@ -677,9 +623,7 @@ ax.legend(lines, ['3rd class male',
                   '1st class female',]);
 ```
 
-
 ![Probabilities calculated from regression](/img/2017-05-07-regression.png)
-
 
 ## Conclusion
 
@@ -735,4 +679,6 @@ any influence on their survival or not. Using some simple text processing we
 could also break out any titles present in the 'Name' columns to further
 describe the social status of the passengers.
 
-I believe there are even more things that could be done but to keep the length down and also to keep us inside the confines of my current abilities this have to be left for the future.
+I believe there are even more things that could be done but to keep the length
+down and also to keep us inside the confines of my current abilities this have
+to be left for the future.
