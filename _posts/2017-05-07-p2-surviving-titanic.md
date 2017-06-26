@@ -6,7 +6,7 @@ published: true
  
 *This is the second post dedicated to my Udacity nanodegree and this time the
 project is my first go at doing a full data analysis from start to finish using
-python notebook and pandas (together with scipy and statsmodels).
+Python notebook and pandas (together with scipy and statsmodels).
 To give focus to the overarching process I have made some choices in order to simplify
 the analysis, as you will see. I am planning to give more focus on the data
 wrangling, model building, and visualization/communication phases in upcoming
@@ -55,7 +55,7 @@ Now we are ready to tackle our chosen dataset.
 The set itself is taken from the following [Kaggle
 competition](https://www.kaggle.com/c/titanic/data) which works as an
 introduction to their machine learning competitions. We will use the same
-dataset but focus more on our analysis of the data rather than making
+dataset but will focus more on our analysis of the data rather than making
 predictions of who will live or die.
 
 We start by reading in the data using the pandas CSV reader and take a look at
@@ -312,7 +312,7 @@ We also tried plotting the survival rate for passengers born the same year but
 too much noise makes it hard to draw any conclusions from it. By combining ages
 into intervals of 4 we can keep some of the noise down. Judging from the
 adjusted graph it looks like we might have a correlation between higher age and
-an decreased probability of survival. We will also try to answer this question
+a decreased probability of survival. We will also try to answer this question
 later on using logistic regression.
 
 ```python
@@ -421,7 +421,7 @@ see that the value of our statistic is higher than all values given for 2
 degrees of freedom. This means that there is a dependence between survival and
 class significant for all reasonable $\alpha$. As a result we reject our $H_0$.
 
-Similarly for survival and sex we use our old pivot table and recieve the
+Similarly for survival and sex we use our old pivot table and receive the
 following results.
 
 ```python
@@ -674,7 +674,7 @@ throwing them away.
 Other than just imputations there are also some data hidden in columns that
 could be used for further analysis after some more reworking of the original
 dataset. For example, we could calculate the size of the group the passenger
-were travelling with using the 'SibSp' and 'Parch' columns to see if this had
+were traveling with using the 'SibSp' and 'Parch' columns to see if this had
 any influence on their survival or not. Using some simple text processing we
 could also break out any titles present in the 'Name' columns to further
 describe the social status of the passengers.

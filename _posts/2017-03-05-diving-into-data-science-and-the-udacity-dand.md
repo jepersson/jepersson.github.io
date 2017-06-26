@@ -21,7 +21,7 @@ related projects.
 At the time of writing there are one optional and seven mandatory projects
 included in the nanodegree (See below).
 
-* **P0, Analyse Bay Area Bike Share Data** (Optional intro to the data analysis
+* **P0, Analyze Bay Area Bike Share Data** (Optional intro to the data analysis
   workflow and [Jupyter notebook](https://jupyter.org))
 * **P1, Test a Perceptual Phenomenon** (Statistical tests and drawing
   conclusions based on data)
@@ -48,7 +48,7 @@ good. Submitting my project in the evening the day before, I received feedback
 already during the next day and the feedback received really helped up my
 motivation.
 
-The contents isn't much to talk about, which is to be expected from an
+The content is not much to talk about, which is to be expected from an
 introduction, but the next project looks promising. I will continue to update
 this blog with my results from each of the projects and anything else I might
 learn on the way that is worth sharing.
