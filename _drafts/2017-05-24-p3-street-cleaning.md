@@ -229,7 +229,7 @@ to .json, some tags are nested with sub tags using the following type of notatio
 `<Tag>:<Sub-tag>`. One example of this is the address tag that looks like the
 following in the .osm data format:
 
-```xml
+```
 <tag k="addr:city" v="Vårgårda" />
 <tag k="addr:housenumber" v="1A" />
 <tag k="addr:street" v="Hallabergsvägen" />
@@ -238,7 +238,7 @@ following in the .osm data format:
 We would like to translate this to something a bit more elegant in our .json
 data that looks something like this:
 
-```json
+```
 "address": {
     "city": "Vårgårda", 
     "street": "Hallabergsvägen",
@@ -256,7 +256,7 @@ Lastly,we also want to convert the positional coordinates from two separate "lat
 
 The final resulting data model will look something similar to this:
 
-```json
+```
 {
     "id": "2406124091",
     "type: "node",
@@ -361,7 +361,7 @@ This is actually not that much to talk about. To import our newly generated
 .json data file we only make sure that we are running our MongoDB instance
 before inputting the following command in our command line.
 
-```shell
+```
 (p3-map) ~/Projects/P3-map (master) $ mongoimport --db p3 --collection maps --file openStreetMapData.osm.json
 
 2017-06-26T21:17:37.171+0900    connected to: localhost
@@ -376,34 +376,45 @@ our local MongoDB instance.
 
 ## Asking questions
 
+So, when we now have got all our data into MongoDB it would be a waste not to
+try asking a couple of questions to see what the data set contains.
+
 Number of documents:
-```
+```python
 > collection.find().count()
+
 395053
 ```
 
 Number of nodes:
-```
+```python
 > db.maps.find({"type": "node"}).count()
+
 361351
 ```
 
 Number of ways:
-```
+```python
 > db.maps.find({"type": "way"}).count()
+
 33690
+```
+
 Unique users:
+```python
 > len(db.maps.distinct("created.user"))
+
 184
 ```
 
 Top #10 contributors:
-```
+```python
 > db.maps.aggregate([
     {"$group":{"_id": "$created.user", "count": {"$sum": 1}}},
     {"$sort":{ "count": -1}},
     {"$limit": 10}
 ])
+
 {u'count': 243983, u'_id': u'Agatefilm'}
 {u'count': 45478, u'_id': u'leojth'}
 {u'count': 15708, u'_id': u'tothod'}
@@ -417,13 +428,14 @@ Top #10 contributors:
 ```
 
 Most common amenity:
-```
+```python
 > db.maps.aggregate([
     {"$match": {"amenity": {"$exists": 1}}},
     {"$group": {"_id": "$amenity", "count": {"$sum": 1}}},
     {"$sort": {"count": -1}},
     {"$limit": 10}
 ])
+
 {u'count': 329, u'_id': u'parking'}
 {u'count': 55, u'_id': u'place_of_worship'}
 {u'count': 44, u'_id': u'bicycle_parking'}
@@ -436,4 +448,143 @@ Most common amenity:
 {u'count': 18, u'_id': u'recycling'}
 ```
 
+From the above queries one that stands out for me is the last one listing the
+most common amenities contained in the data set. Coming from what usually is
+called the most coffee shop dense town in Sweden I am surprised to not be able
+to see something to that effect listed in the above list (last time I looked
+this up were a couple of years ago but, there was somewhere between 20-25 coffee
+shops present at that time).
 
+Let's see if we can find the lost coffee shops somewhere. My first hypothesis
+would be to check if there are any data we are missing hidden in the restaurant
+or bakery tags for amenities.
+
+Let's check how many restaurants and bakeries there are in addition to the
+number of coffee shops.
+
+Number of cafes, restaurants, and bakeries:
+```
+> agg_results = db.maps.aggregate([
+      {"$match": {"$or": [
+          {"amenity": "cafe"},
+          {"amenity": "restaurant"},
+          {"shop": "bakery"}
+      ]}},
+      {"$group": {"_id": {"amenity": "$amenity", "shop": "$shop"},
+                  "count": {"$sum": 1}}}
+  ])
+
+{u'count': 5, u'_id': {u'shop': u'bakery'}}
+{u'count': 15, u'_id': {u'amenity': u'cafe'}}
+{u'count': 32, u'_id': {u'amenity': u'restaurant'}}
+```
+
+We can see using the above query that there are plenty of restaurants for it to
+be room for some mislabeled coffe shops as well. Let's have a look at what type
+of values the cuisine tag for these restaurants are.
+
+List up the different cuisines for restaurants in the data set:
+```
+> agg_results = db.maps.aggregate([
+      {"$match": {"amenity": "restaurant"}},
+      {"$group": {"_id": "$cuisine", "count": {"$sum": 1}}}
+  ])
+
+{u'count': 1, u'_id': u'italian'}
+{u'count': 8, u'_id': u'pizza'}
+{u'count': 5, u'_id': u'regional'}
+{u'count': 1, u'_id': u'thai'}
+{u'count': 1, u'_id': u'chinese'}
+{u'count': 16, u'_id': None}
+```
+
+Other than seeing that Swedish people seem to strongly favor pizza in front of
+any other type of food to eat at a restaurant we also see that we have around 16
+restaurants that does not have a specified cuisine. We will have to dig a bit
+deeper and have a look at what other data we have on these restaurants to see if
+we might be able pinpoint our missing coffee shops. To list up all the keys we
+find we will use the following python function.
+
+```
+def find_all_keys(collection):
+    def find_keys_in_doc(doc):
+        found_keys = []
+        for k, v in doc.items():
+            found_keys.append(k)
+        return found_keys
+
+    all_keys = []
+    for doc in collection:
+        all_keys += find_keys_in_doc(doc)
+    return sorted(set(all_keys))
+```
+
+With the above function we using the following to find all restaurants with any
+defined cuisine and save the output into a new mongodb collection we call
+subset.
+
+```
+> db.maps.aggregate([
+      {"$match": {"$and": [
+                              {"amenity": "restaurant"},
+                              {"cuisine": {"$exists": 0}}
+                          ]}},
+      {"$out": "subset"}])
+> keys = find_all_keys(db.subset.find({}))
+
+_id: 16
+ amenity: 16
+ building: 2
+ created: 16
+ id: 16
+ leisure: 1
+ name: 5
+ node_refs: 2
+ pos: 14
+ smoking: 1
+ source: 1
+ type: 16
+ wheelchair: 1
+```
+
+Given the above results we can see that there actually is not much we can do
+that does not require considerable effort. Would there had been address tags for
+these positions we could had done a cross check with the Swedish version of the
+yellow pages perhaps to find additional data but less than half of these
+restaurants we found do not carry much more information than the position, meta
+data, and the amenity tag. 
+
+In the beginning I was surprised that there were this much data on the region
+given that it is a really minor town in a to begin with small country but I
+start to believe that the reason is that the detail of the data is not that
+high. Just to verify this let's run a last query, similiar to the one above but
+on our whole data set and print out the results.
+
+Occurrences of tags for all data points in the map data set:
+```
+> keys = find_all_keys(db.maps.find({}))
+
+Bing: 4
+FIXME: 34
+_id: 395053
+access: 157
+activation: 2
+address: 2275
+(...)
+wikipedia: 13
+wires: 4
+workrules: 87
+```
+
+Unfortunately, there were way to many keys to list all of them here but giving
+the list a quick read though it is possible to say that with exception for the
+most basic tags there are both duplicates, inconsistent naming (in Swedish and
+English) to name a few of the problems. Since not only the data values but also
+the keys to a large extent are made by the users I start to feel that we should
+not only had taken a look at the values before creating our .json file and
+imported to mongodb but also the keys. 
+
+This would take far too much time to start over at this point so I save this for
+a rainy day sometime in the future instead. But, we can say that while it is
+important to have clean and consistent data the metadata is equally important
+in order to analyze the data.
