@@ -72,3 +72,10 @@ html {
   margin-bottom: 0;
 }
 
+// Print styling
+@media print {
+  .container {
+    width: 992px;
+  }
+}
+
