@@ -58,44 +58,10 @@ There are an abundance of different tags, for example to describe a building you
 add 'building=yes' to a closed way and a fast food restaurant would be a node
 having a 'amenity=fast_food' tag attached to it. 
 
-Just to give an example before we start this is a short extract from the file we
-are going to use.
-
-```
-<?xml version="1.0" encoding="UTF-8"?>
-<osm version="0.6" generator="Overpass API">
-<note>The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.</note>
-<meta osm_base="2017-05-24T13:05:34Z"/>
-  <bounds minlat="57.8798000" minlon="12.4146000" maxlat="58.1055000" maxlon="13.1342000"/>
-    (...)
-  <node id="20854524" lat="58.0571727" lon="12.8186978" version="5" timestamp="2017-03-22T19:38:16Z" changeset="47077002" uid="438299" user="Essin">
-    <tag k="bus" v="yes"/>
-    <tag k="highway" v="bus_stop"/>
-    <tag k="public_transport" v="stop_position"/>
-  </node>
-    (...)
-  <way id="492794593" version="1" timestamp="2017-05-11T14:09:02Z" changeset="48593646" uid="5452069" user="Kudso">
-    <nd ref="4847719722"/>
-    <nd ref="4847719723"/>
-    <nd ref="4847719724"/>
-    <nd ref="4847719725"/>
-    <nd ref="4847719722"/>
-    <tag k="amenity" v="recycling"/>
-    <tag k="landuse" v="landfill"/>
-    <tag k="recycling_type" v="centre"/>
-  </way>
-    (...) 
-  <relation id="7269524" version="1" timestamp="2017-05-22T12:27:10Z" changeset="48887118" uid="1069176" user="landfahrer">
-    <member type="way" ref="431403706" role="outer"/>
-    <member type="way" ref="436018989" role="inner"/>
-    <member type="way" ref="431783552" role="inner"/>
-    <member type="way" ref="431783551" role="inner"/>
-    <tag k="landuse" v="farmland"/>
-    <tag k="type" v="multipolygon"/>
-  </relation>
-    (...)
-</osm>
-```
+For a quick example, see
+[this](https://wiki.openstreetmap.org/wiki/OSM_XML#OSM_XML_file_format_notes)
+example from the wiki page.  Just to give an example before we start this is a
+short extract from the file we are going to use.
 
 ### A small note on character encoding
 
@@ -103,6 +69,9 @@ If you are from a part of the world, like me, where not only the standard
 characters from A to Z are being used you might get some initial troubles when
 trying to handle text strings in your local language. 
 
+  
+
+  
 First of all you will need to add the following row to the top line of your
 file to tell python that you want to use utf-8 as your character encoding.
 
@@ -262,6 +231,7 @@ Lastly,we also want to convert the positional coordinates from two separate
 with the "lat" and "lon" values.  
 
 The final resulting data model will look something similar to this:
+
 ```
 {
     "id": "2406124091",
@@ -290,66 +260,9 @@ The final resulting data model will look something similar to this:
 To transform the current .osm data to .json we use the below
 `shape_element`-function which groups metadata, positional coordinates and
 adresses (together with any other tags containing sub-tags) while writing our
-other key value pairs as is into our .json data file.
-
-```
-def shape_element(element):
-    node = {}
-
-    if element.tag == "way":
-        node['node_refs'] = []
-
-    if element.tag == "node" or element.tag == "way":
-        node['type'] = element.tag
-        attrs = element.attrib
-        node['created'] = {}
-
-        for attr in attrs:
-            if attr == "lat" or attr == "lon":
-                if "pos" not in node:
-                    node['pos'] = []
-                if attr == "lat":
-                    node['pos'].insert(0, float(element.attrib[attr]))
-                elif attr == "lon":
-                    node['pos'].insert(0, float(element.attrib[attr]))
-            elif attr in CREATED:
-                node['created'][attr] = element.attrib[attr]
-            else:
-                node[attr] = element.attrib[attr]
-
-        for subtag in element.iter('tag'):
-            key, value = subtag.attrib['k'], subtag.attrib['v']
-            if problemchars.match(key):
-                continue
-            elif lower_colon.match(key):
-                subtag_keys = key.split(":")
-                if subtag_keys[0] == "addr":
-                    if "address" not in node:
-                        node['address'] = {}
-                    if subtag_keys[1] == "street":
-                        node['address'][subtag_keys[1]] = \
-                            audit_street_names.update_street_name(value)
-                    elif subtag_keys[1] == "postcode":
-                        node['address'][subtag_keys[1]] = \
-                            audit_post_codes.update_post_code(value)
-                    elif subtag_keys[1] == "city":
-                        node['address'][subtag_keys[1]] = \
-                            audit_city_names.update_city_name(value)
-                    else:
-                        node['address'][subtag_keys[1]] = value
-                else:
-                    node[subtag_keys[1]] = value
-            else:
-                if ":" not in key:
-                    node[key] = value
-            if element.tag == "way":
-                for subtag in element.iter('nd'):
-                    node['node_refs'].append(subtag.attrib['ref'])
-        return node
-
-    else:
-        return None
-```
+other key value pairs as is into our .json data file. You can reference the file
+in the github respository
+[here](https://github.com/jepersson/P3-map/blob/master/process_osm.py).
 
 Writing a script were we run all the elements through the above code snippet
 gives us a .json data file at ~85Mb (an 13.5% increase in size) with our newly
@@ -367,12 +280,6 @@ before inputting the following command in our command line.
 
 ```
 $ mongoimport --db p3 --collection maps --file openStreetMapData.osm.json
-
-2017-06-26T21:17:37.171+0900    connected to: localhost
-2017-06-26T21:17:40.158+0900    [#######.................] p3.maps      27.7MB/86.0MB (32.2%)
-2017-06-26T21:17:43.158+0900    [###############.........] p3.maps      56.4MB/86.0MB (65.5%)
-2017-06-26T21:17:45.922+0900    [########################] p3.maps      86.0MB/86.0MB (100.0%)
-2017-06-26T21:17:45.922+0900    imported 395053 documents
 ```
 
 With this command we have now loaded our data containing 395053 documents into
@@ -387,34 +294,34 @@ try running a couple of queries to see what the data set contains.
 [here](http://api.mongodb.com/python/current/tutorial.html?))
 
 Number of nodes:
+
 ```
 > db.maps.find({"type": "node"}).count()
-
 361351
 ```
 
 Number of ways:
+
 ```
 > db.maps.find({"type": "way"}).count()
-
 33690
 ```
 
 Unique users:
+
 ```
 > len(db.maps.distinct("created.user"))
-
 184
 ```
 
 Top #10 contributors:
+
 ```
 > db.maps.aggregate([
       {"$group":{"_id": "$created.user", "count": {"$sum": 1}}},
       {"$sort":{ "count": -1}},
       {"$limit": 10}
   ])
-
 {u'count': 243983, u'_id': u'Agatefilm'}
 {u'count': 45478, u'_id': u'leojth'}
 {u'count': 15708, u'_id': u'tothod'}
@@ -428,6 +335,7 @@ Top #10 contributors:
 ```
 
 Most common amenity:
+
 ```
 > db.maps.aggregate([
       {"$match": {"amenity": {"$exists": 1}}},
@@ -435,7 +343,6 @@ Most common amenity:
       {"$sort": {"count": -1}},
       {"$limit": 10}
   ])
-
 {u'count': 329, u'_id': u'parking'}
 {u'count': 55, u'_id': u'place_of_worship'}
 {u'count': 44, u'_id': u'bicycle_parking'}
@@ -463,6 +370,7 @@ Let's check how many restaurants and bakeries there are in addition to the
 number of coffee shops.
 
 Number of cafes, restaurants, and bakeries:
+
 ```
 > agg_results = db.maps.aggregate([
       {"$match": {"$or": [
@@ -473,7 +381,6 @@ Number of cafes, restaurants, and bakeries:
       {"$group": {"_id": {"amenity": "$amenity", "shop": "$shop"},
                   "count": {"$sum": 1}}}
   ])
-
 {u'count': 5, u'_id': {u'shop': u'bakery'}}
 {u'count': 15, u'_id': {u'amenity': u'cafe'}}
 {u'count': 32, u'_id': {u'amenity': u'restaurant'}}
@@ -484,12 +391,12 @@ be room for some mislabeled coffee shops as well. Let's have a look at what type
 of values the cuisine tag for these restaurants are.
 
 List up the different cuisines for restaurants in the data set:
+
 ```
 > agg_results = db.maps.aggregate([
       {"$match": {"amenity": "restaurant"}},
       {"$group": {"_id": "$cuisine", "count": {"$sum": 1}}}
   ])
-
 {u'count': 1, u'_id': u'italian'}
 {u'count': 8, u'_id': u'pizza'}
 {u'count': 5, u'_id': u'regional'}
@@ -531,7 +438,6 @@ subset.
                           ]}},
       {"$out": "subset"}])
 > keys = find_all_keys(db.subset.find({}))
-
 _id: 16
  amenity: 16
  building: 2
@@ -561,9 +467,9 @@ high. Just to verify this let's run a last query, similar to the one above but
 on our whole data set and print out the results.
 
 Occurrences of tags for all data points in the map data set:
+
 ```
 > keys = find_all_keys(db.maps.find({}))
-
 Bing: 4
 FIXME: 34
 _id: 395053
