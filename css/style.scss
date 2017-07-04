@@ -74,8 +74,8 @@ html {
 
 // Print styling
 @media print {
-  .container {
-    width: 991px;
+  body {
+    width: 992px;
   }
 }
 
