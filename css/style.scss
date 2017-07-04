@@ -74,11 +74,8 @@ html {
 
 // Print styling
 @media print {
-  body {
+  .container {
     width: 992px;
-  }
-  #blog-content {
-    width: 100%;
   }
 }
 
