@@ -38,17 +38,17 @@ from the [OSM wiki](http://wiki.openstreetmap.org/wiki/Beginners_Guide_1.3).
 The data consists of five different types of elements and each element can have
 tags attached to it describing what that element is. The five element types are:
 
-> * **Node:** Nodes are dots used to that mark locations. Nodes can be separate or
->   can be connected.  
-> * **Way:** Ways are a connected line of nodes. It is used to create roads,
->   paths, rivers, and so on.  
-> * **Closed way:** Closed ways are ways that form a closed loop. Usually forms an
->   area.  
-> * **Area:** Areas are closed ways which are also filled. An area is usually
->   implicitly implied when making a closed way.  
-> * **Relation:** Relation can be used to create more complex shapes, or to
->   represent elements that are related but not physically connected. We won't get
->   into this now. See the "advanced topics" section for more info.  
+* **Node:** Nodes are dots used to that mark locations. Nodes can be separate or
+  can be connected.  
+* **Way:** Ways are a connected line of nodes. It is used to create roads,
+  paths, rivers, and so on.  
+* **Closed way:** Closed ways are ways that form a closed loop. Usually forms an
+  area.  
+* **Area:** Areas are closed ways which are also filled. An area is usually
+  implicitly implied when making a closed way.  
+* **Relation:** Relation can be used to create more complex shapes, or to
+  represent elements that are related but not physically connected. We won't get
+  into this now. See the "advanced topics" section for more info.  
 
 These are the basic elements that defines the structure of the data set we are
 going to work with. Further, each of these elements can carry tags in the form
@@ -226,7 +226,7 @@ We will do something similar with the meta data values saved in the element by
 grouping together values such as "version", "changeset", "timestamp", "user",
 and "uid".
 
-Lastly,we also want to convert the positional coordinates from two separate
+Lastly, we also want to convert the positional coordinates from two separate
 "lat" and "lon" key value pairs into one single "pos" entry containing a list
 with the "lat" and "lon" values.  
 
@@ -259,9 +259,9 @@ The final resulting data model will look something similar to this:
 
 To transform the current .osm data to .json we use the below
 `shape_element`-function which groups metadata, positional coordinates and
-adresses (together with any other tags containing sub-tags) while writing our
+addresses (together with any other tags containing sub-tags) while writing our
 other key value pairs as is into our .json data file. You can reference the file
-in the github respository
+in the github repository
 [here](https://github.com/jepersson/P3-map/blob/master/process_osm.py).
 
 Writing a script were we run all the elements through the above code snippet
@@ -494,3 +494,20 @@ This would take far too much time to start over at this point so I save this for
 a rainy day sometime in the future instead. But, we can say that while it is
 important to have clean and consistent data the metadata is equally important
 in order to analyze it.
+
+As a last footnote, a possible way to flesh out the missing parts of the data
+set would be to use another data source with information complementing the one
+existing OpenStreetMap data. One such source would be the Swedish yellow pages,
+[eniro.se](http://www.eniro.se), which contains addresses and names to both businesses
+and private residents in Sweden.
+
+I believe that as long as we use the data obtained for personal use it should be
+okay, but they might would like to have a word with us should our analysis end
+up in any commercial application. Another thing to take into account is
+restrictions on the number of requests and amount of data we are able to pull
+out from their open API. It is not uncomman that there are restrictions to
+minimize the risk of misuse and depending on the size of our data set this might
+cause trouble for us.
+
+Thank you for holding out until the end of another of my long posts and I hope
+to see you next time when we will look closer at some explorative data analysis.
