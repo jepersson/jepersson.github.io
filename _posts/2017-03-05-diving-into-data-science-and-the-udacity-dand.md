@@ -4,7 +4,7 @@ layout: post
 published: true
 ---
 
-![Data Analyst Nanodegree](/img/DAND.png)
+![Data Analyst Nanodegree](/img/2017-03-05-DAND.png)
 
 I have been thinking about starting a blog for some time but I never knew what
 to write about. So when I decided to enroll in the [Data Analyst
