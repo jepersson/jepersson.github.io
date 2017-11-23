@@ -13,12 +13,12 @@ Udacity I thought it might be a good opportunity to start a blog as well.
 
 I won't go into the details here on why I'm starting to study data science, but
 among the different online alternatives I looked at, I felt that the Udacity
-Nanodegree offered the best mix between statistics, programming (in both python
-**and** R), and project based assignments. I believe that after completing this
-nanodegree I will have a good foundation for a portfolio with data science
+Nanodegree offered the best mix of statistics, programming (in both python
+**and** R), and project-based assignments. I believe that after completing this
+nanodegree I will have a good foundation for a portfolio of data science
 related projects.
 
-At the time of writing there are one optional and seven mandatory projects
+At the time of writing, there are one optional and seven mandatory projects
 included in the nanodegree (See below).
 
 * **P0, Analyze Bay Area Bike Share Data** (Optional intro to the data analysis
@@ -36,7 +36,7 @@ included in the nanodegree (See below).
 * **P6, Make effective Data Visualization** (Create data visualizations
   according to current best practices with dimple.js or d3.js)
 * **P7, Design an A/B Test** (Design and analyze an A/B test in order to find
-  improvements for a website)
+  improvements to a website)
 
 For anyone interested to know more about the contents all the course material
 and project descriptions are accessible free of charge. However, you will not
