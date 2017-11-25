@@ -16,7 +16,7 @@ posts.*
 
 This time we will take a look at a dataset containing passenger information from
 the Titanic and see if we can find any patterns in the data pointing to if sex,
-age, or social status had any influence over the probability of surviving the
+age or social status had any influence over the probability of surviving the
 disastrous shipwreck.
 
 Was it possibly so that the upper class were favored and had a higher chance of
@@ -123,17 +123,17 @@ We can see that in addition to the Cabin column, Age, and Embarked columns are
 also missing values.  We either need to estimate these missing values or drop them. 
 
 We could estimate missing ages with either median or average values, but for our
-analysis the non-null 714 values will be enough. We choose to just drop the rows
+analysis, the non-null 714 values will be enough. We choose to just drop the rows
 with null values. Cabin has too many missing values to make anything out of and
-according to wikipedia also a possible bias towards first class passengers.
+according to Wikipedia also a possible bias towards first class passengers.
 However, something that would be interesting to look up another time is for example if cabin
 proximity to the few lifeboats that were available influenced the possibility
-for survival. This is out of scope so instead we choose to just drop the columns.
+of survival. This is out of scope so instead, we choose to just drop the columns.
 
-Also, upon further inspection it seems like SibSp/Parch and ticket numbers don't
+Also, upon further inspection, it seems like SibSp/Parch and ticket numbers don't
 have much of a connection making it hard to make sense of which passengers are
 related to who. There might be some interesting analysis in answering the
-question if being in a group increased or decreased the probability for
+question if being in a group increased or decreased the probability of
 survival. But, once again this might be a bit to much work for this time so we
 choose to drop these three columns as well.
 
@@ -267,7 +267,7 @@ male around 30 traveling in third class and, unfortunately, did not survive the
 shipwreck. Worth noting is that after we cleaned up the data we have no missing
 values in any of our remaining columns.
 
-Lets try to plot some different relationships between class, sex, and age for
+Let's try to plot some different relationships between class, sex, and age for
 the survivors and non-survivors in our data set to see if we can find something
 interesting. We start out with plotting comparisons for the composition of
 passenger class and sex between survivors and casualties. 
@@ -300,9 +300,9 @@ plt.show()
 
 ![Passengers survived by class and age](/img/2017-05-07-survivors-by.png)
 
-From the above bar graphs we can see that there is a big change in ratio between
+From the above bar graphs we can see that there is a big change in the ratio between
 male and female, and between third class and first/second class passengers
-represented in the two different categories (Survived: False/True). It do look
+represented in the two different categories (Survived: False/True). It does look
 as if women had a higher chance of survival than men and third class passengers
 a much lower chance than 1 class passengers. To really make sure that this isn't
 just in our sample we will perform two tests to see if the deviations are
@@ -342,15 +342,15 @@ axs[1].set(title='4. Probability of survival per Age group',
 
 ![Probability for survival and age](/img/2017-05-07-probability-of-survival.png)
 
-## Chi squared test for independence
+## Chi-squared test for independence
 
 To summarize, after looking at the above three variables and plots we can
 hypothesize about there being three factors that all had an effect on the chance
 of survival.
 
-1. Class, third class passengers had a lower probability for survival than first
+1. Class, third class passengers had a lower probability of survival than first
    and second class passengers.
-2. Sex, women had a higher probability for survival than men.
+2. Sex, women had a higher probability of survival than men.
 3. Age, higher age meant a decreased chance of survival.
 
 We will start by using a [chi squared test for
@@ -361,10 +361,10 @@ Gender.
 The test is possible to perform since all our involved variables are
 categorical, meaning that all our outcomes are mutually exclusive (you cannot be
 dead and alive, or in first and second class at the same time) and the total
-probability for all outcomes adds up to 1 (meaning you have to be either be dead
+probability of all outcomes adds up to 1 (meaning you have to be either be dead
 or alive etc).
 
-Explained very shortly to do a chi squared test we calculate our chi square
+Explained very shortly to do a chi-squared test we calculate our chi-square
 statistic, $\chi^2$, as a normalized sum of the squared deviations between
 observed and expected frequencies and then compare the statistic to a critical
 value (found in a table) based on our chosen confidence level and the degrees of
@@ -419,9 +419,9 @@ Looking up the critical value in a
 [$\chi^2$-table](https://people.richland.edu/james/lecture/m170/tbl-chi.html) we
 see that the value of our statistic is higher than all values given for 2
 degrees of freedom. This means that there is a dependence between survival and
-class significant for all reasonable $\alpha$. As a result we reject our $H_0$.
+class significant for all reasonable $\alpha$. As a result, we reject our $H_0$.
 
-Similarly for survival and sex we use our old pivot table and receive the
+Similarly, for survival and sex we use our old pivot table and receive the
 following results.
 
 ```python
@@ -456,7 +456,7 @@ significant dependency between sex and the probability for survival.
 
 ## Logistical regression for probabilities  
 
-Next we will take our analysis one step further and investigate the relation
+Next, we will take our analysis one step further and investigate the relation
 between age and survival with help from the logistical regression model from the
 statsmodels package. For a more extensive example have a look at [this blog
 post](http://blog.yhat.com/posts/logistic-regression-python-rodeo.html) which I
@@ -532,18 +532,18 @@ Optimization terminated successfully.
 | female | 2.1893 | 0.198 | 11.035 | 0.000 | 1.800 | 2.578 |
 
 Looking at the coefficient for Age, we can see that there is a negative relation
-between passenger age and probability of survival. On the other hand Class_1,
+between passenger age and the probability of survival. On the other hand Class_1,
 Class_2, and female have positive coefficients meaning that there is a positive
-correlation between both passenger class and sex, and the probability for
-survival. This confirms our chi^2 test results and initial hypothesis that more
-women and higher class passengers had a higher probability for survival. 
+correlation between both passenger class and sex, and the probability of
+survival. This confirms our chi^2 test results and the initial hypothesis that more
+women and higher class passengers had a higher probability of survival. 
 
 It is also important to note that the confidence intervals for all coefficients
 are strictly negative or strictly positive meaning there is a significant
-probability that each of the coefficients have influence over a passengers
+probability that each of the coefficients have influence over passengers
 chance of survival.
 
-As a last trick we plot all the different possibilities for survival based on
+As a last trick, we plot all the different possibilities for survival based on
 age for each combination of our categorical variables so that we can visualize
 what passengers had the highest and/or lowest possibility of survival for the
 shipwreck. 
@@ -627,9 +627,9 @@ ax.legend(lines, ['3rd class male',
 
 ## Conclusion
 
-From the last plot we can see that our analysis shows a relation between higher
-age and a lower chance of surviving the shipwreck for all for all classes and
-sexes. Further the different combinations of passenger sex and class can be
+From the last plot, we can see that our analysis shows a relation between higher
+age and a lower chance of surviving the shipwreck for all classes and
+sexes. Further, the different combinations of passenger sex and class can be
 ranked the following way, from highest probability of survival to lowest
 compared to other passengers of the same age. (Color from above plot in
 brackets)
@@ -645,7 +645,7 @@ Now I believe we can answer our initial questions. Did age, class (using
 passenger class as a proxy here), and/or sex influence the probability of
 survival? Based on our findings we can with statistical certainty say, yes. 
 
-We can see from the above ranked list, or plot, that women in general had a
+We can see from the above ranked list, or plot, that women, in general, had a
 higher probability than men of surviving the shipwreck and that upper class
 passengers were favored over other passengers of the same gender. Sex did almost
 always have a priority over class with the exception being first class male
@@ -660,7 +660,7 @@ end on the sinking ship.
 Even though it might look and sound as if we have a pretty clear picture of what
 factors affected the probability of survival the night of the Titanic shipwreck
 it is important to remember that with the data and methods used, we are only
-able to prove that there are a correlation between the variables examined. We
+able to prove that there is a correlation between the variables examined. We
 would need more data and a controlled environment to be able to draw any
 conclusions regarding the causality between the relationships we observed.
 
@@ -674,11 +674,11 @@ throwing them away.
 Other than just imputations there are also some data hidden in columns that
 could be used for further analysis after some more reworking of the original
 dataset. For example, we could calculate the size of the group the passenger
-were traveling with using the 'SibSp' and 'Parch' columns to see if this had
+was traveling with using the 'SibSp' and 'Parch' columns to see if this had
 any influence on their survival or not. Using some simple text processing we
 could also break out any titles present in the 'Name' columns to further
 describe the social status of the passengers.
 
 I believe there are even more things that could be done but to keep the length
-down and also to keep us inside the confines of my current abilities this have
+down and also to keep us within the confines of my current abilities this have
 to be left for the future.
