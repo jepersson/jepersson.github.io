@@ -4,10 +4,10 @@ layout: post
 ---
 
 *Now it is time for the third post dedicated to the Udacity nanodegree and this
-time the theme is data wrangling. Rather than focus on the analysis of the data
-we will work with checking it's consistency and looking for possible human
-errors that might have occured when the data was created. Tools used this time
-was my text editor of choice, VIM, together with MongoDB and the accompaning
+time the theme is data wrangling. Rather than focus on the analysis of the data,
+we will work with checking its consistency and looking for possible human
+errors that might have occurred when the data was created. Tools used this time
+was my text editor of choice, VIM, together with MongoDB and the accompanying
 driver for python called pymongo.*
 
 ## Introduction and overview
@@ -46,17 +46,17 @@ tags attached to it describing what that element is. The five element types are:
   area.  
 * **Area:** Areas are closed ways which are also filled. An area is usually
   implicitly implied when making a closed way.  
-* **Relation:** Relation can be used to create more complex shapes, or to
+* **Relation:** Relation can be used to create more complex shapes or to
   represent elements that are related but not physically connected. We won't get
   into this now. See the "advanced topics" section for more info.  
 
-These are the basic elements that defines the structure of the data set we are
+These are the basic elements that define the structure of the dataset we are
 going to work with. Further, each of these elements can carry tags in the form
-of key and value pairs describing the parent element and it's characteristics.
+of key and value pairs describing the parent element and its characteristics.
 
-There are an abundance of different tags, for example to describe a building you
+There is an abundance of different tags, for example, to describe a building you
 add 'building=yes' to a closed way and a fast food restaurant would be a node
-having a 'amenity=fast_food' tag attached to it. 
+having an 'amenity=fast_food' tag attached to it. 
 
 For a quick example, see
 [this](https://wiki.openstreetmap.org/wiki/OSM_XML#OSM_XML_file_format_notes)
@@ -68,11 +68,8 @@ short extract from the file we are going to use.
 If you are from a part of the world, like me, where not only the standard
 characters from A to Z are being used you might get some initial troubles when
 trying to handle text strings in your local language. 
-
   
-
-  
-First of all you will need to add the following row to the top line of your
+First of all, you will need to add the following row to the top line of your
 file to tell python that you want to use utf-8 as your character encoding.
 
 ```
@@ -87,14 +84,14 @@ And lastly, for strings defined in your python code will have to explicitly be
 stated as unicode strings by prepending a u in front of the first quote like
 this `u'My unicode string.'`.
 
-I believe this should have been fixed in python 3 but since the nanodegree's
+I believe this should have been fixed in python 3 but since the Nanodegree's
 material still is targeting python 2.7 I am sticking to that version for now.
 
 ## Cleaning up the data
 
-So lets start by planning how we should clean our data set. We will follow an
+So let's start by planning how we should clean our dataset. We will follow an
 iterative process given in the class for Data Wrangling from the Data Analyst
-Nanodegree. The steps of this process is as described below:
+Nanodegree. The steps of this process are as described below:
 
 1. Audit - Find problematic elements in the data set
 2. Plan cleaning - Identify cause, define cleaning operation, and test it
@@ -108,7 +105,7 @@ fully cleaned .json data file.
 
 Now it is finally time to get our hands dirty with some python and we start by 
 looking at the data set's address field. The first subfield we look at is the
-postal code using the following python function to audit our data.
+postcode using the following python function to audit our data.
 
 ```
 POST_CODE_REGEX = re.compile(r'^\d{3} \d{2}$')
@@ -128,26 +125,26 @@ def audit_post_code(unknown_codes, post_code):
     return
 ```
 
-What this function does is that it compares all post codes we find in our
-data set with the regular expression given and if the code doesn't match the
+What this function does is that it compares all postcodes we find in our
+dataset with the regular expression given and if the code doesn't match the
 format we expect it to have we add it to the 'unknown_codes' set. By the way,
-the format for Swedish post codes is two set of 3 and 2 numbers separated by a
+the format for Swedish postcodes is two set of 3 and 2 numbers separated by a
 space, visit [Wikipedia](https://en.wikipedia.org/wiki/Postal_codes_in_Sweden)
 to learn more.  
 
-To add a bit more finesse we also check that the two first digits in the postal
-code is in the range between 42 and 54 which is the positional numbers
+To add a bit more finesse we also check that the two first digits of the 
+postcode is in the range between 42 and 54 which is the positional numbers
 indicating the region our map data is taken from. Anything not starting in this
 range is probably wrong and from a totally different part of the country than
 what we are expecting.
 
-Running the above code and printing out the postal codes found in the
-`unknown_codes` variable we found that some codes where inputted in the data set
+Running the above code and printing out the postcodes found in the
+`unknown_codes` variable we found that some codes were inputted in the data set
 without the separating space we are expecting. 
 
-Now to device our plan for how to to fix this issue we use the below function
+Now to device our plan for how to fix this issue we use the below function
 that takes a five digit number and splits it up into two groups of 3 and 2
-digits. (In hindsight doing this the other way around, treating the postal codes
+digits. (In hindsight doing this the other way around, treating the postcodes
 as a 5 digit number would have been a better choice since handling a string for
 a number is far from optimal.)
 
@@ -175,19 +172,19 @@ from the first step.
 This time I repeated the process for the city names and street names attributes
 and fixed the following errors before deciding that it was enough: 
 
-* One city name containing the postal code instead of the correct data. Since
+* One city name contained the postcode instead of the correct data. Since
   there was only one occurrence of this error it felt reasonable to just correct
   it by hand.
 
 * Street names had inconsequent capitalization, used `.title()` method to fix
   this.
 
-* Street names had inconsequent ordering of place names as part of the address,
-  sometimes the place name were before and sometimes after the actual street
+* Street names had an inconsequent ordering of place names as part of the address,
+  sometimes the place name was before and sometimes after the actual street
   name. Verified possible place names and then pushed any occurrences of these
   names in front of the street name to make the format consistent.
 
-* Also verified that all addresses in the data set had prefixes, suffixes, or
+* Also verified that all addresses in the dataset had prefixes, suffixes, or
   names-endings normally used in Swedish street names.
 
 To see the code for how I did these checks and revisions please see the
@@ -200,7 +197,7 @@ Finishing this it felt like a good timing to move on to creating our .json file.
 
 Converting our data from the .osm format to .json we first need to decide on
 what model we should use for our data. While some tags can be directly
-transferred from one format to another just by bringing over the key value pair
+transferred from one format to another just by bringing over the key-value pair
 to .json, some tags are nested with sub tags using the following type of notation
 `<Tag>:<Sub-tag>`. One example of this is the address tag that looks like the
 following in the .osm data format:
@@ -222,12 +219,12 @@ data that looks like this:
 }
 ```
 
-We will do something similar with the meta data values saved in the element by
+We will do something similar with the metadata values saved in the element by
 grouping together values such as "version", "changeset", "timestamp", "user",
 and "uid".
 
 Lastly, we also want to convert the positional coordinates from two separate
-"lat" and "lon" key value pairs into one single "pos" entry containing a list
+"lat" and "lon" key-value pairs into one single "pos" entry containing a list
 with the "lat" and "lon" values.  
 
 The final resulting data model will look something similar to this:
@@ -260,7 +257,7 @@ The final resulting data model will look something similar to this:
 To transform the current .osm data to .json we use the below
 `shape_element`-function which groups metadata, positional coordinates and
 addresses (together with any other tags containing sub-tags) while writing our
-other key value pairs as is into our .json data file. You can reference the file
+other key-value pairs as is into our .json data file. You can reference the file
 in the github repository
 [here](https://github.com/jepersson/P3-map/blob/master/process_osm.py).
 
@@ -270,11 +267,11 @@ cleaned map data.
 
 Now we only have two steps left, to import the .json file into a local MongoDB
 instance and use the MongoDB query language (through pymongo in our case) to ask
-some question about my old home town.
+some question about my old hometown.
 
 ## Importing the .json datafile to MongoDB
 
-This is actually doesn't take that much effort. To import our newly generated
+This actually doesn't take that much effort. To import our newly generated
 .json data file we only make sure that we are running our MongoDB instance
 before inputting the following command in our command line.
 
@@ -282,13 +279,13 @@ before inputting the following command in our command line.
 $ mongoimport --db p3 --collection maps --file openStreetMapData.osm.json
 ```
 
-With this command we have now loaded our data containing 395053 documents into
+With this command, we have now loaded our data containing 395053 documents into
 our local MongoDB instance.
 
 ## Running queries 
 
 So, when we now have got all our data into MongoDB it would be a waste not to
-try running a couple of queries to see what the data set contains.
+try running a couple of queries to see what the dataset contains.
 
 (To see how to run these queries through pymongo yourself take a look
 [here](http://api.mongodb.com/python/current/tutorial.html?))
@@ -355,8 +352,8 @@ Most common amenity:
 {u'count': 18, u'_id': u'recycling'}
 ```
 
-From the above queries one that stands out for me is the last one listing the
-most common amenities contained in the data set. Coming from what usually is
+From the above queries, one that stands out for me is the last one listing the
+most common amenities contained in the dataset. Coming from what usually is
 called the most coffee shop dense town in Sweden I am surprised to not be able
 to see something to that effect listed in the above list (last time I looked
 this up were a couple of years ago but, there was somewhere between 20-25 coffee
@@ -407,9 +404,9 @@ List up the different cuisines for restaurants in the data set:
 
 Other than seeing that Swedish people seem to strongly favor pizza in front of
 any other type of food to eat at a restaurant we also see that we have around 16
-restaurants that doesn't have a specified cuisine. We will have to dig a bit
+restaurants that don't have a specified cuisine. We will have to dig a bit
 deeper and have a look at what other data we have on these restaurants to see if
-we might be able pinpoint our missing coffee shops. To list up all the keys we
+we might be able to pinpoint our missing coffee shops. To list up all the keys we
 find we will use the following python function.
 
 ```
@@ -426,7 +423,7 @@ def find_all_keys(collection):
     return sorted(set(all_keys))
 ```
 
-With the above function we using the following to find all restaurants with any
+With the above function, we using the following to find all restaurants with any
 defined cuisine and save the output into a new MongoDB collection we call
 subset.
 
@@ -455,12 +452,12 @@ _id: 16
 
 Given the above results we can see that there actually is not much we can do
 that does not require considerable effort. Would there had been address tags for
-these positions we could had done a cross check with the Swedish version of the
+these positions we could have done a cross check with the Swedish version of the
 yellow pages perhaps to find additional data but less than half of these
-restaurants we found do not carry much more information than the position, meta
-data, and the amenity tag. 
+restaurants we found do not carry much more information than the position, 
+metadata, and the amenity tag. 
 
-In the beginning I was surprised that there were this much data on the region
+In the beginning, I was surprised that there was this much data on the region
 given that it is a really minor town in a to begin with small country but I
 start to believe that the reason is that the resolution of the data is not that
 high. Just to verify this let's run a last query, similar to the one above but
@@ -482,12 +479,12 @@ wires: 4
 workrules: 87
 ```
 
-Unfortunately, there were way to many keys to list all of them here but giving
-the list a quick read though it is possible to say that with exception for the
+Unfortunately, there were way too many keys to list all of them here but giving
+the list a quick readthrough it is possible to say that with exception for the
 most basic tags there are both duplicates, inconsistent naming (in Swedish and
 English) to name a few of the problems. Since not only the data values but also
 the keys to a large extent are made by the users I start to feel that we should
-not only had taken a look at the values before creating our .json file and
+not only have taken a look at the values before creating our .json file and
 imported to MongoDB but also the keys. 
 
 This would take far too much time to start over at this point so I save this for
@@ -498,14 +495,14 @@ in order to analyze it.
 As a last footnote, a possible way to flesh out the missing parts of the data
 set would be to use another data source with information complementing the one
 existing OpenStreetMap data. One such source would be the Swedish yellow pages,
-[eniro.se](http://www.eniro.se), which contains addresses and names to both businesses
+[eniro.se](http://www.eniro.se), which contains addresses and names of both businesses
 and private residents in Sweden.
 
 I believe that as long as we use the data obtained for personal use it should be
-okay, but they might would like to have a word with us should our analysis end
+okay, but they might like to have a word with us should our analysis end
 up in any commercial application. Another thing to take into account is
 restrictions on the number of requests and amount of data we are able to pull
-out from their open API. It is not uncomman that there are restrictions to
+out from their open API. It is not uncommon that there are restrictions to
 minimize the risk of misuse and depending on the size of our data set this might
 cause trouble for us.
 
