@@ -4,7 +4,7 @@ layout: post
 published: true
 ---
 
-[![Tableau Story](img/2017-11-29-tableau_story.png)](https://public.tableau.com/views/P6-PISAfamilystatusfinal/Familystatusandgrades?:embed=y&:display_count=yes&:toolbar=no)
+[![Tableau Story](/img/2017-11-29-tableau_story.png)](https://public.tableau.com/views/P6-PISAfamilystatusfinal/Familystatusandgrades?:embed=y&:display_count=yes&:toolbar=no)
 
 *This will be the last post and project I do connected to my Data Analysis
 Nanodegree. The last project focuses on visualization and on using Tableau. The
