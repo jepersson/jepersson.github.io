@@ -1,5 +1,5 @@
 ---
-title: P0, Diving into data science and the Udacity DAND
+title: Diving into data science and the Udacity DAND
 layout: post
 published: true
 ---
